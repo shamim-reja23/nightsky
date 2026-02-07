@@ -1,98 +1,81 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import Star from '@/src/components/Star';
+import Moon from '@/src/components/Moon';
+import { View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useState, useCallback } from 'react';
+import { Memory } from '@/src/data/types';
+import { getStarMemories } from '@/src/data/storage';
+import { router } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+const MAX_STARS = 7;
 
-export default function HomeScreen() {
+const STAR_POSITIONS = [
+  { top: "20%", left: "15%"},
+  { top: "35%", left: "70%"},
+  { top: "50%", left: "30%"},
+  { top: "65%", left: "60%"},
+  { top: "25%", left: "50%"},
+  { top: "75%", left: "20%"},
+  { top: "45%", left: "85%"},
+
+]
+
+export default function SkyScreen() {
+  const [ stars, setStars] = useState<Memory[]>([]);
+
+  useEffect(() => {
+    const loadStars = async () => {
+      const data = await getStarMemories();
+      setStars(data);
+    }
+
+    loadStars();
+  }, []);
+  
+  useFocusEffect(
+    useCallback(() => {
+      getStarMemories().then(setStars);
+    }, [])
+  );
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <LinearGradient 
+      colors={['#020617', '#020617', '#000000']}
+      className="flex-1 "
+    >
+      <View className='flex-1 relative'>
+        <Moon />
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        {STAR_POSITIONS.slice(0, MAX_STARS).map((pos, index) => {
+          const isFilled = index < stars.length;
+          const memory = stars[index];
+
+          return (
+            <Star 
+              key={index}
+              top={pos.top} 
+              left={pos.left}
+              filled={isFilled}
+              onPress={() => {
+                if(isFilled && memory?.id){
+                   router.push({
+                    pathname: '/(modals)/ViewStar',
+                    params: { id: memory.id }
+                   });
+                }
+
+                if(!isFilled){
+                  router.push('/addStar');
+                }
+              }}
+            />
+          );
+        })}
+      </View>
+    
+      
+    </LinearGradient>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
