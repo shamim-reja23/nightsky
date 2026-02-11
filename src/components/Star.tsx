@@ -1,33 +1,19 @@
-import { TouchableOpacity, Animated } from "react-native";
-import { useEffect, useRef } from "react";
+import { TouchableOpacity, View } from "react-native";
+
 
 type StarProps = {
   top: string;
   left: string;
   filled?: boolean;
+  sizeClass: string;
   onPress?: () => void;
 };
 
-export default function Star({ top, left, filled = false, onPress }: StarProps) {
-  const scale = useRef(new Animated.Value(1)).current;
+export default function Star({ top, left, filled = false, sizeClass, onPress }: StarProps) {
 
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(scale, {
-          toValue: 1.3,
-          duration: 1500,
-          useNativeDriver: true,
-        }),
-
-        Animated.timing(scale, {
-          toValue: 1,
-          duration: 1500,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
+  const glowRadius = filled ? 8 : 3;
+  const glowOpacity = filled ? 0.9 : 0.3;
+  const starColor = filled ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.35)";
 
   return (
     <TouchableOpacity
@@ -37,8 +23,25 @@ export default function Star({ top, left, filled = false, onPress }: StarProps) 
       onPress={onPress}
       hitSlop={20}
     >
-      <Animated.View className={`rounded-full ${ filled ? "w-3 h-3 bg-white opacity-100" : "w-3 h-3 bg-white opacity-30"
-      }`}  style={{transform: [{scale}]}}/>
+      <View 
+        style={[
+          {
+            width: sizeClass.includes('w-1.5') ? 6 : sizeClass.includes('w-2') ? 8 : 4,
+            height: sizeClass.includes('h-1.5') ? 6 : sizeClass.includes('h-2') ? 8 : 4,
+            borderRadius: 999,
+            backgroundColor: starColor,
+            borderWidth: filled ? 0.5 : 0,
+            borderColor: "rgba(255, 255, 255, 0.6)",
+          },
+          {
+            shadowColor: "#ffffff",
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: glowOpacity,
+            shadowRadius: glowRadius,
+            elevation: filled ? 8 : 3,
+          },
+        ]}
+      />
     </TouchableOpacity>
   );
 }

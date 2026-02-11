@@ -41,8 +41,24 @@ export const addMemory = async (memory: Memory) => {
       await saveMemories(updated);
       return;
     }
+    // star: replace memory if id is same
+    const existingIndex = memories.findIndex(
+        m => m.id === memory.id && m.type === "star"
+    );
   
-    const updated = [...memories, memory];
+    let updated: Memory[];
+
+    if( existingIndex !== -1) {
+        // replace
+        updated = memories.map(m => 
+            m.id === memory.id ? memory : m
+        );
+    }
+    else{
+        // add new
+        updated = [...memories, memory];
+    }
+    
     await saveMemories(updated);
   };
   

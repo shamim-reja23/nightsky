@@ -25,21 +25,47 @@ export default function Moon() {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      className="absolute top-16 self-center"
       onPress={handlePress}
+      style={{
+        position: "absolute",
+        top: "15%",
+        left: "45%",
+        alignItems: "center",
+      }}
     >
-      <View 
-        className="w-32 h-32 rounded-full bg-slate-200 items-center justify-center"
-        style={{
-          shadowColor: "#000",
-          shadowOpacity: 0.8,
-          shadowRadius: 20,
-        }}
-      >
-        <Text className="text-slate-700 text-xs text-center px-2">
-          {moon ? "Your Special Memory" : "Add a special memory to the moon"}
-        </Text>
+      <View className="relative w-20 h-20">
+        <View
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            backgroundColor: "white",
+            shadowColor: "#fff",
+            shadowOpacity: 0.6,
+            shadowRadius: 30,
+            shadowOffset: { width: 0, height: 0 },
+            elevation: 15,
+          }}
+        />
+
+        <View
+          style={{
+            position: "absolute",
+            top: -4,
+            left: -8,
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            backgroundColor: "#131022",
+          }}
+        />
       </View>
+
+      {moon && (
+        <Text className="absolute -bottom-10 tracking-widest text-xs font-light uppercase text-white/60">
+          Moon
+        </Text>
+      )}
     </TouchableOpacity>
   );
 }
