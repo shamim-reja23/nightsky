@@ -125,12 +125,12 @@ export default function SkyScreen() {
             className='w-16 h-16 rounded-full bg-white/5 border border-white/20 items-center justify-center backdrop-blur-2xl '
           >
             <View className='absolute inset-0 rounded-full bg-[#3713ec]/20 opacity-50'/>
-            <Text className='text-[#3713ec] text-3xl'>
+            <Text className='text-[#131022] text-3xl'>
               +
             </Text>
           </TouchableOpacity>
         </View>
-        <Text className='absolute -bottom-6 text-[10px] text-white/20 font-medium uppercase tracking-widest'>
+        <Text className='absolute -bottom-6 text-[10px] text-white/40 font-medium uppercase tracking-widest'>
           New Memory
         </Text>
       </View>
