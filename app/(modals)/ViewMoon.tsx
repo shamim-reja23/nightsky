@@ -1,12 +1,15 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router';
 import { Memory } from '@/src/data/types';
-import { getMoonMemory } from '@/src/data/storage';
+import { deleteMemory, getMoonMemory } from '@/src/data/storage';
+import { LinearGradient } from 'expo-linear-gradient';
+import DeleteConfirmationSheet from '@/src/components/DeleteConfirmationSheet';
 
 const ViewMoon = () => {
     const router = useRouter();
     const [memory, setMemory] = useState<Memory | null>(null);
+    const [ showDelete, setShowDelete ] = useState(false);
 
     useEffect(() => {
         getMoonMemory().then(setMemory);
@@ -15,38 +18,112 @@ const ViewMoon = () => {
     if(!memory) return null;
 
   return (
-    <View className='flex-1 bg-black px-6 pt-20'>
-        <Text className='text-white text-xl mb-6'>
-            🌙 Special Memory
-        </Text>
+    <LinearGradient 
+      className='flex-1'
+      colors={['#131022', '#1a1635', '#131022']}
+    >
+      <View className='flex-row justify-between items-center px-6 pt-10 pb-3'>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className='w-10 h-10 items-center justify-center bg-white/10 rounded-full'
+        >
+          <Text className='text-white text-lg'> ‹ </Text>
+        </TouchableOpacity>
 
+        <View className='items-center'>
+            <Text className='text-[#3713ec]/70 text-xs tracking-widest uppercase font-semibold'>
+              Special Memory 
+            </Text>
+
+            <Text className='text-white text-sm mt-1'>
+              The Moon Vault
+            </Text>
+        </View>
+
+        <View className='w-10' />
+      </View>
+
+      <ScrollView 
+        className='flex-1 px-6'
+        contentContainerStyle={{ 
+          paddingBottom: 40, 
+          paddingTop: 40,
+          alignItems: 'center',
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         {memory.imageUri && (
-            <Image 
-                source={{ uri: memory.imageUri }} 
-                className='w-full h-48 rounded-lg mb-6'
-                resizeMode='cover'
+          <View className='mb-10'>
+            <View
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundColor: 'rgba( 55, 19, 236, 0.35)',
+                borderRadius: 999,
+                shadowColor: '#3713ec',
+                shadowOpacity: 0.5,
+                shadowRadius: 30,
+              }}
             />
+            <Image 
+              source={{ uri: memory.imageUri }} 
+              className='w-[300px] h-[300px] rounded-full border border-white/10'
+              resizeMode='cover'
+            />
+          </View>
         )}
 
-        <Text className='text-zinc-200 text-base leading-relaxed'>
+        <View className='items-center max-w-[320px]'>
+          <Text className='text-white/70 text-base leading-relaxed text-center'>
             {memory.text}
-        </Text>
+          </Text>
+        </View>
+      </ScrollView>
+      
+      <View className='px-6 pb-10 items-center'>
+        <View className='flex-row items-center bg-white/5 border border-white/10 rounded-full px-4 py-2 w-[260px]'>
+          <TouchableOpacity
+            onPress={() => 
+              router.push({
+                pathname: '/addMoon',
+                params: {
+                  id: memory.id,
+                  text: memory.text,
+                  imageUri: memory.imageUri,
+                },
+              })
+            }
+            className="flex-1 py-3 items-center"
+          >
+            <Text className="text-white/60 font-medium">
+                Edit 
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-            onPress={() => router.push("/addMoon")}
-            className='bg-zinc-800 px-6 py-3 rounded-full mb-4 self-center mt-20'
-        >
-            <Text className='text-white font-medium'>Replace Moon Memory</Text>
-        </TouchableOpacity>
+          <View className="w-[1px] h-6 bg-white/30" />
 
-        <TouchableOpacity
-            onPress={() => router.back()}
-            className='absolute bottom-10 self-center bg-white px-8 py-3 rounded-full'
-        >
-            <Text className='text-black font-semibold'>Close</Text>
-        </TouchableOpacity>
-    </View>
+          <TouchableOpacity
+            onPress={ async () => setShowDelete(true)}
+            className='flex-1 items-center py-3'
+          >
+            <Text className='text-red-400 font-medium'>
+              Delete
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <DeleteConfirmationSheet
+        visible={showDelete}
+        onCancel={() => setShowDelete(false)}
+        onConfirm={async () => {
+          await deleteMemory(memory.id);
+          setShowDelete(false);
+          router.back();
+        }}
+      />
+    </LinearGradient>
   )
 }
 
-export default ViewMoon
+export default ViewMoon;

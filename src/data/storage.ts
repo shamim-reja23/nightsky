@@ -30,18 +30,29 @@ const saveMemories = async (memories: Memory[]) => {
 // add new memory
 export const addMemory = async (memory: Memory) => {
     const memories = await getMemories();
-  
+    
+    // Moon: edit or create
     if (memory.type === "moon") {
-      // Remove ALL existing moon memories
-      const nonMoonMemories = memories.filter(
-        m => m.type !== "moon"
+      const existingIndex = memories.findIndex(
+        m => m.type === "moon"
       );
   
-      const updated = [...nonMoonMemories, memory];
+      let updated: Memory[];
+
+      if(existingIndex !== -1) {
+        // edit
+        updated = memories.map(m => 
+            m.type === "moon" ? {...m, ...memory} : m
+        );
+      }
+      else{
+        // create
+        updated = [...memories, memory];
+      }
       await saveMemories(updated);
       return;
     }
-    // star: replace memory if id is same
+    // star: edit or create by id
     const existingIndex = memories.findIndex(
         m => m.id === memory.id && m.type === "star"
     );
@@ -49,7 +60,7 @@ export const addMemory = async (memory: Memory) => {
     let updated: Memory[];
 
     if( existingIndex !== -1) {
-        // replace
+        // edit
         updated = memories.map(m => 
             m.id === memory.id ? memory : m
         );

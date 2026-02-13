@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Memory } from "../data/types";
 import { getMoonMemory } from "../data/storage";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Moon() {
   const router = useRouter();
@@ -48,7 +49,8 @@ export default function Moon() {
           }}
         />
 
-        <View
+        <LinearGradient
+          colors={["#131029", "#2d1b69"]}
           style={{
             position: "absolute",
             top: -4,
@@ -56,7 +58,6 @@ export default function Moon() {
             width: 80,
             height: 80,
             borderRadius: 40,
-            backgroundColor: "#131022",
           }}
         />
       </View>

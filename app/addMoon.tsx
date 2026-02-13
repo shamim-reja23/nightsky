@@ -1,14 +1,26 @@
-import { Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
-import React, { useState } from 'react'
+import { Text, TextInput, TouchableOpacity, View, Image, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router';
-import { addMemory } from '@/src/data/storage';
+import { addMemory, getMoonMemory } from '@/src/data/storage';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Memory } from '@/src/data/types';
 
 const addMoon = () => {
     const router = useRouter();
     const [text, setText] = useState('');
     const [imageUri, setImageUri] = useState<string | null>(null);
+    const [ existingMoon, setExistingMoon ] = useState<Memory | null>(null);
+
+    useEffect(() => {
+      getMoonMemory().then(moon => {
+        if(moon) {
+          setExistingMoon(moon);
+          setText(moon.text);
+          setImageUri(moon.imageUri ?? null);
+        }
+      });
+    }, []);
 
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -25,15 +37,17 @@ const addMoon = () => {
         if(!text.trim()) return;
 
         await addMemory({
-            id: Date.now().toString(),
+            id: existingMoon?.id ?? Date.now().toString(),
             type: 'moon',
             text,
             imageUri: imageUri ?? undefined,
-            createdAt: Date.now(),
+            createdAt: existingMoon?.createdAt ?? Date.now(),
         })
 
         router.back();
     }
+
+
 
   return (
     <LinearGradient
@@ -47,13 +61,17 @@ const addMoon = () => {
         </TouchableOpacity>
 
         <Text className='text-white text-lg font-semibold'>
-          Create Moon Memory
+          {existingMoon ? "Edit Moon Memory" : "Create Moon Memory"}
         </Text>
 
         <View className='w-6'/>
       </View>
       
-      <View className='flex-1 px-6 pb-8'>
+      <ScrollView 
+        className='flex-1 px-6'
+        contentContainerStyle={{ paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View 
           className='rounded-xl p-6 gap-8'
           style={{
@@ -90,7 +108,7 @@ const addMoon = () => {
             </TouchableOpacity>
 
             <View className='mt-8 '>
-              <Text className='text-sm tracking-widest uppercase text-white/40 font-medium -mb-9'>
+              <Text className='text-sm tracking-widest uppercase text-white/50 font-medium'>
                 The Story
               </Text>
               
@@ -100,7 +118,8 @@ const addMoon = () => {
                 placeholder={`Write something that matter the most...`}
                 placeholderTextColor='rgba(255, 255, 255, 0.25)'
                 multiline
-                className='text-white/70 text-lg leading-relaxed min-h-[130px] p-0 '
+                textAlignVertical='top'
+                className='text-white/70 text-lg leading-relaxed min-h-[130px] p-0 mt-2'
               />
             </View>
           </View>
@@ -127,7 +146,7 @@ const addMoon = () => {
             Become the moon in your sky
           </Text>
         </View>
-      </View>
+      </ScrollView>
             
     </LinearGradient>
   );

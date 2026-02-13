@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
 import { addMemory } from '@/src/data/storage'
 import { useState } from 'react'
@@ -67,8 +67,12 @@ const addStar = () => {
 
         <View className='w-6'/>
       </View>
-      
-      <View className='flex-1 px-6 pb-8'>
+
+      <ScrollView 
+        className='flex-1 px-6'
+        contentContainerStyle={{ paddingBottom: 120 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View 
           className='rounded-xl p-6 gap-8'
           style={{
@@ -105,7 +109,7 @@ const addStar = () => {
             </TouchableOpacity>
 
             <View className='mt-8 '>
-              <Text className='text-sm tracking-widest uppercase text-white/40 font-medium -mb-9'>
+              <Text className='text-sm tracking-widest uppercase text-white/50 font-medium'>
                 The Story
               </Text>
               
@@ -115,7 +119,8 @@ const addStar = () => {
                 placeholder={`Wishper your memory to the stars...`}
                 placeholderTextColor='rgba(255, 255, 255, 0.25)'
                 multiline
-                className='text-white/70 text-lg leading-relaxed min-h-[130px] p-0 '
+                textAlignVertical='top'
+                className='text-white/70 text-lg leading-relaxed min-h-[130px] p-0 mt-2'
               />
             </View>
           </View>
@@ -123,7 +128,7 @@ const addStar = () => {
           
         </View>
 
-        <View className='mt-8'>
+        <View className='mt-10'>
           <TouchableOpacity
             onPress={handleSave}
             className='bg-[#3713ec] rounded-xl py-4 items-center'
@@ -142,7 +147,7 @@ const addStar = () => {
             Become a star in your sky
           </Text>
         </View>
-      </View>
+      </ScrollView>
             
     </LinearGradient>
   )
