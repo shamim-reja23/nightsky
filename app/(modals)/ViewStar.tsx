@@ -66,29 +66,46 @@ const ViewStar = () => {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {memory.imageUri && (
-          <View className='mb-10'>
-            <View
-              style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundColor: 'rgba( 55, 19, 236, 0.35)',
-                borderRadius: 16,
-                filter: 'blur(30px)',
-              }}
-            />
-            <Image 
-              source={{ uri: memory.imageUri }} 
-              className='w-[300px] h-[300px] rounded-xl border border-white/10'
-              resizeMode='cover'
-            />
-          </View>
-        )}
-
         <View className='items-center max-w-[320px]'>
-          <Text className='text-white/70 text-base leading-relaxed text-center'>
-            {memory.text}
+          <Text className='text-white text-2xl font-semibold text-center mb-4'>
+            {memory.title}
           </Text>
+
+          <Text className='text-white/40 text-sm text-center'>
+            {new Date(memory.date).toDateString()}
+          </Text>
+
+          {memory.location && (
+            <Text className='text-white/40 text-sm text-center mt-1'>
+              {memory.location}
+            </Text>
+          )}
+          
+          {memory.blocks.map(block => {
+            if(block.type === 'text') {
+              return (
+                <Text 
+                  key={block.id} 
+                  className='text-white/80 text-center text-base leading-relaxed mt-4'
+                >
+                  {block.content}
+                </Text>
+              )
+            }
+
+            if(block.type === 'image') {
+              return (
+                <Image 
+                  key={block.id}
+                  source={{ uri: block.uri }}
+                  className='w-[300px] h-[300px] rounded-xl mt-6'
+                  resizeMode='cover'
+                />
+              )
+            }
+
+            return null;
+          })}
         </View>
       </ScrollView>
       
@@ -100,8 +117,8 @@ const ViewStar = () => {
                 pathname: '/addStar',
                 params: {
                   id: memory.id,
-                  text: memory.text,
-                  imageUri: memory.imageUri,
+                  //text: memory.text,
+                  //imageUri: memory.imageUri,
                 },
               })
             }

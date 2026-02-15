@@ -4,50 +4,82 @@ import { addMemory } from '@/src/data/storage'
 import { useState, useEffect, useRef } from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
+import { MemoryBlock } from '@/src/data/types';
 
 const addStar = () => {
   const router = useRouter();
-  const [ text, setText ] = useState('');
-  const [ imageUri, setImageUri ] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
 
-  const pickImage = async () => {
+  const [title, setTitle] = useState('');
+  const [location, setLocation] = useState('');
+  const [blocks, setBlocks] = useState<MemoryBlock[]>([
+    {
+      id: Date.now().toString(),
+      type: 'text',
+      content: '',
+    }
+  ]);
+
+  const addTextBlock = () => {
+    setBlocks(prev => [
+      ...prev,
+      {
+        id: Date.now().toString(),
+        type: 'text',
+        content: '',
+      },
+    ]);
+  };
+
+  const addImageBlock = async () => {
+    const imageCount = blocks.filter(b => b.type === 'image').length;
+
+    if (imageCount >= 5) return;
+    
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.8,
     });
 
-    if(!result.canceled){
-      setImageUri(result.assets[0].uri);
+    if (!result.canceled){
+      setBlocks(prev => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          type: 'image',
+          uri: result.assets[0].uri,
+        },
+      ]);
     }
-  }
+  };
+
+  const deleteBlock = (id: string) => {
+    setBlocks(prev => prev.filter(block => block.id !== id));
+  };
 
   const handleSave = async () => {
-    if(!text.trim()) return;
+    if(!title.trim()) return;
+
+    const hasText = blocks.some(
+      b => b.type === 'text' && b.content.trim() !== ''
+    );
+
+    if (!hasText) return;
 
     await addMemory({
-      id: id ?? Date.now().toString(),
+      id: Date.now().toString(),
       type: 'star',
-      text,
-      imageUri: imageUri ?? undefined,
+      title,
+      blocks,
+      date: new Date().toISOString(),
+      location,
       createdAt: Date.now(),
     });
 
     router.back();
-  }
+  };
 
-  const { id, text: oldText, imageUri: oldImage } =
-  useLocalSearchParams<{
-    id?: string;
-    text?: string;
-    imageUri?: string;
-  }>();
 
-  useEffect(() => {
-    if (oldText) setText(oldText);
-    if (oldImage) setImageUri(oldImage);
-  }, []);
-  
 
   return (
     <ImageBackground
@@ -98,53 +130,87 @@ const addStar = () => {
               borderBlockColor: 'rgba(255, 255, 255, 0.1)',
             }}
           >
-            <View className='gap-3'>
-              <Text className='text-xs uppercase tracking-widest text-white/50'>
-              Visual Spark
-              </Text>
+            <TextInput
+              value={title}
+              onChangeText={setTitle}
+              placeholder='Title '
+              placeholderTextColor='rgba(255, 255, 255, 0.4)'
+              className='text-white text-xl font-semibold'
+            />
 
-              <TouchableOpacity 
-                onPress={pickImage}
-                className='aspect-square rounded-lg border-2 border-dashed border-white/15 items-center justify-center bg-white/5'
+            <TextInput
+              value={location}
+              onChangeText={setLocation}
+              placeholder='Location (optional)'
+              placeholderTextColor='rgba(255, 255, 255, 0.4)'
+              className='text-white/70 mt-2'
+            />
+            
+            {blocks.map(block => {
+              if (block.type === 'text') {
+                return (
+                  <View key={block.id} className='mt-6'>
+                    <TextInput
+                      value={block.content}
+                      onChangeText={(value) => 
+                        setBlocks(prev => 
+                          prev.map(b => 
+                            b.id === block.id 
+                              ? { ...b, content: value } 
+                              : b
+                          )
+                        )
+                      }
+                      textAlignVertical='top'
+                      placeholder='Write your memory...'
+                      placeholderTextColor='rgba(255, 255, 255, 0.3)'
+                      multiline
+                      className='text-white/80 min-h-[120px]'
+                    />
+                    
+                  </View>
+                );
+              }
+
+              if (block.type === 'image'){
+                return (
+                  <View key={block.id} className='mt-6'>
+                    <Image
+                      source={{ uri: block.uri }}
+                      className='w-full h-48 rounded-lg'
+                      resizeMode='cover'
+                    />
+                  </View>
+                );
+              }
+
+              return null;
+            })}
+
+            <View className='flex-row gap-4 mt-6'>
+              <TouchableOpacity
+                onPress={() => 
+                  setBlocks(prev => [
+                    ...prev,
+                    {
+                      id: Date.now().toString(),
+                      type: 'text',
+                      content: '',
+                    },
+                  ])
+                }
+                className='bg-white/10 px-4 py-2 rounded-lg'
               >
-                {imageUri ? (
-                  <Image
-                    source={{ uri: imageUri }}
-                    className='w-full h-full rounded-lg' 
-                    resizeMode='cover'
-                  />
-                ) : (
-                  <>
-                    <View className='w-12 h-12 rounded-full bg-[#3713ec]/20 items-center justify-center mb-2'>
-                      <Text className='text-[#3713ec] text-xl'>+</Text>
-                    </View>
-                    <Text className='text-sm text-white/40'>
-                      Tap to add a photo
-                    </Text>
-                  </>
-                )}
+                <Text className='text-white'>Add Text</Text>
               </TouchableOpacity>
 
-              <View className='mt-8 '>
-                <Text className='text-sm tracking-widest uppercase text-white/50 font-medium'>
-                  The Story
-                </Text>
-                
-                <TextInput
-                  value={text}
-                  onChangeText={setText}
-                  placeholder={`Wishper your memory to the stars...`}
-                  placeholderTextColor='rgba(255, 255, 255, 0.25)'
-                  multiline
-                  textAlignVertical='top'
-                  scrollEnabled={true}
-                  style={{ maxHeight: 200, minHeight: 130 }}
-                  className='text-white/70 text-lg leading-relaxed p-0 mt-2'
-                />
-              </View>
+              <TouchableOpacity
+                onPress={addImageBlock}
+                className='bg-white/10 px-4 py-2 rounded-lg'
+              >
+                <Text className='text-white'>Add Image</Text>
+              </TouchableOpacity>
             </View>
-
-            
           </View>
 
           <View className='mt-10'>

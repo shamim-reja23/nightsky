@@ -64,7 +64,7 @@ const ViewMoon = () => {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {memory.imageUri && (
+        {memory && (
           <View className='mb-10'>
             <View
               style={{
@@ -78,7 +78,7 @@ const ViewMoon = () => {
               }}
             />
             <Image 
-              source={{ uri: memory.imageUri }} 
+              source={{  }} 
               className='w-[300px] h-[300px] rounded-full border border-white/10'
               resizeMode='cover'
             />
@@ -87,7 +87,7 @@ const ViewMoon = () => {
 
         <View className='items-center max-w-[320px]'>
           <Text className='text-white/70 text-base leading-relaxed text-center'>
-            {memory.text}
+            {}
           </Text>
         </View>
       </ScrollView>
@@ -100,8 +100,8 @@ const ViewMoon = () => {
                 pathname: '/addMoon',
                 params: {
                   id: memory.id,
-                  text: memory.text,
-                  imageUri: memory.imageUri,
+                  //text: memory.text,
+                  //imageUri: memory.imageUri,
                 },
               })
             }

@@ -4,7 +4,7 @@ import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Memory } from '@/src/data/types';
-import { getStarMemories } from '@/src/data/storage';
+import { addMemory, getStarMemories } from '@/src/data/storage';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -21,6 +21,7 @@ const STAR_POSITIONS = [
   { top: "85%", left: "70%"},
   { top: "30%", left: "40%"},
 ]
+
 
 export default function SkyScreen() {
   const [ stars, setStars] = useState<Memory[]>([]);
@@ -48,6 +49,7 @@ export default function SkyScreen() {
       return Math.random() < 0.5 ? 'w-1.5 h-1.5' : 'w-2 h-2';
     });
   }, [stars.length]);
+
 
   return (
     <ImageBackground 

@@ -16,8 +16,8 @@ const addMoon = () => {
       getMoonMemory().then(moon => {
         if(moon) {
           setExistingMoon(moon);
-          setText(moon.text);
-          setImageUri(moon.imageUri ?? null);
+          //setText();
+          //setImageUri();
         }
       });
     }, []);
@@ -36,13 +36,13 @@ const addMoon = () => {
     const handleSave = async () => {
         if(!text.trim()) return;
 
-        await addMemory({
-            id: existingMoon?.id ?? Date.now().toString(),
-            type: 'moon',
-            text,
-            imageUri: imageUri ?? undefined,
-            createdAt: existingMoon?.createdAt ?? Date.now(),
-        })
+        // await addMemory({
+        //     id: existingMoon?.id ?? Date.now().toString(),
+        //     type: 'moon',
+        //     //text,
+        //     //imageUri: imageUri ?? undefined,
+        //     createdAt: existingMoon?.createdAt ?? Date.now(),
+        // })
 
         router.back();
     }
