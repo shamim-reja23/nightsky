@@ -1,4 +1,4 @@
-import { Text, TextInput, TouchableOpacity, View, Image, ScrollView } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View, Image, ScrollView, ImageBackground, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router';
 import { addMemory, getMoonMemory } from '@/src/data/storage';
@@ -50,11 +50,22 @@ const addMoon = () => {
 
 
   return (
-    <LinearGradient
-      colors={['#131022', '#1e0b5e']}
-      className='flex-1'
+    <ImageBackground
+      source={require('@/assets/images/night-c-bg.jpg')}
+      resizeMode='cover'
+      className="flex-1 "
     >
-  
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          backgroundColor: 'rgba(19, 16, 34, 0.6)',
+        }}
+      />
+      <LinearGradient
+        colors={['transparent', '#131022']}
+        style={StyleSheet.absoluteFillObject}
+      />
+
       <View className='flex-row items-center justify-between px-6 pt-14 pb-4'>
         <TouchableOpacity onPress={() => router.back()}>
           <Text className='text-white/70 text-lg'>✕</Text>
@@ -148,7 +159,7 @@ const addMoon = () => {
         </View>
       </ScrollView>
             
-    </LinearGradient>
+    </ImageBackground>
   );
 }
 

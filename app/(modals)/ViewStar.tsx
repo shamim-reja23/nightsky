@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, Image, ScrollView, ImageBackground, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { Memory } from '@/src/data/types';
@@ -24,10 +24,22 @@ const ViewStar = () => {
     if(!memory) return null;
 
   return (
-    <LinearGradient 
+    <ImageBackground 
       className='flex-1'
-      colors={['#131022', '#1a1635', '#131022']}
+      source={require('@/assets/images/night-c-bg.jpg')}
+      resizeMode='cover'
     >
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          backgroundColor: 'rgba(19, 16, 34, 0.6)',
+        }}
+      />
+      <LinearGradient
+        colors={['transparent', '#131022']}
+        style={StyleSheet.absoluteFillObject}
+      />
+
       <View className='flex-row justify-between items-center px-6 pb-3 pt-10'>
         <TouchableOpacity
           onPress={() => router.back()}
@@ -122,7 +134,7 @@ const ViewStar = () => {
           router.back();
         }}
       />
-    </LinearGradient>
+    </ImageBackground>
   )
 }
 

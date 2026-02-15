@@ -1,6 +1,6 @@
 import Star from '@/src/components/Star';
 import Moon from '@/src/components/Moon';
-import { View, Text, Touchable, TouchableOpacity } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Memory } from '@/src/data/types';
@@ -50,11 +50,21 @@ export default function SkyScreen() {
   }, [stars.length]);
 
   return (
-    <LinearGradient 
-      colors={['#131022', '#1e0b5e', '#2d1b69']}
+    <ImageBackground 
+      source={require('@/assets/images/night-c-bg.jpg')}
+      resizeMode='cover'
       className="flex-1 "
     >
-
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          backgroundColor: 'rgba(19, 16, 34, 0.2)',
+        }}
+      />
+      <LinearGradient
+        colors={['transparent', '#131022']}
+        style={StyleSheet.absoluteFillObject}
+      />
       <View
         style={{
           position: "absolute",
@@ -139,7 +149,7 @@ export default function SkyScreen() {
       </View>
     
       
-    </LinearGradient>
+    </ImageBackground>
   );
 }
 

@@ -1,6 +1,6 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Memory } from "../data/types";
 import { getMoonMemory } from "../data/storage";
 import { LinearGradient } from "expo-linear-gradient";
@@ -34,7 +34,7 @@ export default function Moon() {
         alignItems: "center",
       }}
     >
-      <View className="relative w-20 h-20">
+      {/* <View className="relative w-20 h-20">
         <View
           style={{
             width: 80,
@@ -60,6 +60,33 @@ export default function Moon() {
             borderRadius: 40,
           }}
         />
+      </View> */}
+
+      <View className="relative w-20 h-20 items-center justify-center">
+        {/* <View
+          style={{
+            position: "absolute",
+            width: 70,
+            height: 70,
+            borderRadius: 35,
+            backgroundColor: "rgba( 255, 255, 255, 0.1)",
+            shadowColor: "#fff",
+            shadowOpacity: 0.25,
+            shadowRadius: 18,
+            shadowOffset: { width: 4, height: 0 },
+            elevation: 8,
+            transform: [{ translateX: 5 },]
+          }}
+        /> */}
+        
+        <View className="w-20 h-20 rounded-full overflow-hidden">
+          <Image
+            source={require("@/assets/images/crescent.png")}
+            className="w-full h-full -rotate-90"
+            resizeMode="cover"
+            
+          />
+        </View>
       </View>
 
       {moon && (
